@@ -4,15 +4,36 @@ import DisplayComponent from './components/DisplayComponent'
 import ButtonsComponent from './components/ButtonsComponent'
 
 function App() {
+  
+  const [status, setStatus] = useState(0)
+  //0 stop
+  //1 run
+  //2 stopped
+
+  const [inter, setInter] = useState(null)
+
   const [time, setTime] = useState({
     ms:0, s:0, m:0, h:0
   })
 
   const startClock = () =>{
-    setInterval(run, 80);
+    setStatus(1)
+    setInter( setInterval(run, 80) )
+  }
+  const stopClock = () =>{
+    setStatus(2)
+    clearInterval(inter)
+  }
+  const resumeClock = () =>{
+    startClock()
+  }
+  const resetClock = () =>{
+    clearInterval(inter)
+    setStatus(0)
+    setTime({ms:0, s:0, m:0, h:0})
   }
 
-  let updtMs=0, updtS=0, updtM=0, updtH=0
+  let updtMs=time.ms, updtS=time.s, updtM=time.m, updtH=time.h
   const run = () => {
     if(updtMs === 60){
       updtS++
@@ -34,7 +55,7 @@ function App() {
     <div className="App card bg-danger text-white">
         <div className="card-body w-100">
           <DisplayComponent time={time}/>
-          <ButtonsComponent start={startClock}/>
+          <ButtonsComponent status={status} start={startClock} stop={stopClock} resume={resumeClock} reset={resetClock}/>
         </div>
     </div>
   );
